@@ -6,7 +6,7 @@ class Perseguidor:
         self.x = x
         self.y = y
         self.raio = 9
-        self.velocidade = 6
+        self.velocidade = 7
         self.cor = (255, 0, 0)  
     def desenhar(self, tela):
         pygame.draw.circle(tela, self.cor, (self.x, self.y), self.raio)
