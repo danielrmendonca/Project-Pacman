@@ -11,7 +11,7 @@ class Perseguidor:
     def desenhar(self, tela):
         pygame.draw.circle(tela, self.cor, (self.x, self.y), self.raio)
 
-    def mover(self, jogador_x, jogador_y, paredes):
+    def perseguir(self, jogador_x, jogador_y, paredes):
         
         dx = jogador_x - self.x
         dy = jogador_y - self.y
@@ -22,8 +22,8 @@ class Perseguidor:
         novo_y = self.y + dy * self.velocidade
 
        
-        pode_mover_x = True
-        pode_mover_y = True
+        pode_perseguir_x = True
+        pode_perseguir_y = True
 
         for parede in paredes:
             
@@ -34,7 +34,7 @@ class Perseguidor:
                 self.raio * 2
             )
             if area_teste_x.colliderect(parede):
-                pode_mover_x = False
+                pode_perseguir_x = False
 
           
             area_teste_y = pygame.Rect(
@@ -44,9 +44,9 @@ class Perseguidor:
                 self.raio * 2
             )
             if area_teste_y.colliderect(parede):
-                pode_mover_y = False
+                pode_perseguir_y = False
 
-        if pode_mover_x:
+        if pode_perseguir_x:
             self.x = novo_x
-        if pode_mover_y:
+        if pode_perseguir_y:
             self.y = novo_y
