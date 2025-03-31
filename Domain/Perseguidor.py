@@ -15,6 +15,22 @@ class Perseguidor:
         self.grid_size = 30  # Tamanho da célula do grid (ajuste conforme seu labirinto)
         self.ultima_atualizacao_caminho = 0
         self.intervalo_atualizacao_caminho = 500  # Atualiza caminho a cada 1 segundo
+        self.resetar_tempo()
+        self.velocidade_atual = self.velocidade
+        self.fator_velocidade = 0.2
+        self.velocidade_max = 6.0
+
+    def resetar_tempo(self):
+        self.tempo_inicial = pygame.time.get_ticks()
+
+    def get_tempo_decorrido(self):
+        return (pygame.time.get_ticks() - self.tempo_inicial)/ 1000
+    
+    def get_velocidade_atual(self):
+
+        tempo_decorrido = self.get_tempo_decorrido()
+        velocidade_acumulada =  self.velocidade_atual + (self.fator_velocidade * tempo_decorrido)
+        return min(velocidade_acumulada, self.velocidade_max)
         
     def desenhar(self, tela):
         pygame.draw.circle(tela, self.cor, (int(self.x), int(self.y)), self.raio)
@@ -138,8 +154,9 @@ class Perseguidor:
         self.direcao = self.seguir_caminho()
         
         # Movimentação
-        novo_x = self.x + self.direcao[0] * self.velocidade
-        novo_y = self.y + self.direcao[1] * self.velocidade
+        self.veleocidade_atual = self.get_velocidade_atual()
+        novo_x = self.x + self.direcao[0] * self.veleocidade_atual
+        novo_y = self.y + self.direcao[1] * self.veleocidade_atual
         
         # Verificação de colisão simplificada (o pathfinding já evita paredes)
         self.x = novo_x

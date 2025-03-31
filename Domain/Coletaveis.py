@@ -23,5 +23,7 @@ class Coletaveis:
             self.consumido = True
             return True
         return False
+    
+    
 
 
