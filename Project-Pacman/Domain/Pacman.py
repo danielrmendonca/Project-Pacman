@@ -63,6 +63,9 @@ for y in range(len(LABIRINTO)):
         elif LABIRINTO[y][x] == 3:
             monitores.append(Monitor(pos_x, pos_y))
             spanwmanager.adicionar_local_monitor(pos_x, pos_y)  # x,y correto
+        elif LABIRINTO[y][x] == 4:
+            buff_velocidade.append(Buff_velocidade(pos_x, pos_y)) 
+            spanwmanager.adicionar_local_moeda(pos_x, pos_y)
             
 pontos = 0
 relogio = pygame.time.Clock()
