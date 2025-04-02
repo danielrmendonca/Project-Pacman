@@ -5,6 +5,7 @@ from Coletaveis import *
 from Perseguidor import Perseguidor
 from Labirinto import LABIRINTO
 import random
+from Spawn import SpawnManager
 
 pygame.init()
 
@@ -49,8 +50,9 @@ for y in range(len(LABIRINTO)):
 # Criação das moedas
 moedas = []
 monitores = []
-spanwmanager = SpawnManager()
+spawn_manager = SpawnManager()
 buff_velocidade = []
+buffonmap = False
 
 for y in range(len(LABIRINTO)):
     for x in range(len(LABIRINTO[y])):
@@ -59,10 +61,10 @@ for y in range(len(LABIRINTO)):
         
         if LABIRINTO[y][x] == 2:
             moedas.append(Coletaveis(pos_x, pos_y))
-            spanwmanager.adicionar_local_moeda(pos_x, pos_y)  # x,y correto
+            spawn_manager.adicionar_local_moeda(pos_x, pos_y)  # x,y correto
         elif LABIRINTO[y][x] == 3:
             monitores.append(Monitor(pos_x, pos_y))
-            spanwmanager.adicionar_local_monitor(pos_x, pos_y)  # x,y correto
+            spawn_manager.adicionar_local_monitor(pos_x, pos_y)  # x,y correto
             
 pontos = 0
 relogio = pygame.time.Clock()
@@ -100,9 +102,11 @@ while cacada:
     for monitor in monitores[:]:
         if monitor.verificar_colisao(player):
             monitores.remove(monitor)
-            chance = random.random()
-            if chance < 0.3:  # 30% de chance
-                spanwmanager.tentar_spawn_buff(moedas, monitores, buff_velocidade)
+    
+    chance = random.random()
+    if chance < 0.3 and not buffonmap:  # 30% de chance
+        spawn_manager.tentar_spawn_buff(moedas, monitores, buff_velocidade, buffonmap)
+
 
     # Renderização
     tela.fill(PRETO)
@@ -115,13 +119,15 @@ while cacada:
     for moeda in moedas:
         moeda.desenhar(tela)
 
-    if len(buff_velocidade) > 0:
+    if len(buff_velocidade) == 1:
         for buff in buff_velocidade[:]:
             buff.desenhar(tela)
+            buffonmap = True
 
     for buff in buff_velocidade[:]:
         if buff.verificar_colisao(player):
             buff_velocidade.remove(buff)
+            buffonmap = False
 
 
     for monitor in monitores:

@@ -40,25 +40,3 @@ class Buff_velocidade(Coletaveis):
         self.cor = (0, 0, 255)
 
     
-class SpawnManager:
-    def __init__(self):
-        self.locais_moedas = []
-        self.locais_monitores = []
-        self.tempo_ultimo_spawn = 0
-        self.intervalo_spawn = 5000  # 5 segundos em ms
-
-    def adicionar_local_moeda(self, x, y):
-        self.locais_moedas.append((y, x))
-        
-    def adicionar_local_monitor(self, x, y):
-        self.locais_monitores.append((y, x))
-        
-    def tentar_spawn_buff(self, moedas, monitores, buffs):
-        tempo_atual = pygame.time.get_ticks()
-        if tempo_atual - self.tempo_ultimo_spawn > self.intervalo_spawn:
-            locais_disponiveis = self.locais_moedas + self.locais_monitores
-            if locais_disponiveis:
-                x, y = random.choice(locais_disponiveis)
-                buffs.append(Buff_velocidade(x, y))
-                self.tempo_ultimo_spawn = tempo_atual
-
