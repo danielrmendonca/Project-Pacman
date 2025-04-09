@@ -5,7 +5,7 @@ class Protagonista:
         self.x=x
         self.y=y
         self.raio=9
-        self.velocidade=6
+        self.velocidade=3
         self.cor = (255, 255, 0) 
 
     def modelo_personagem(self,tela):

@@ -7,7 +7,7 @@ class Perseguidor:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.velocidade = 2.7
+        self.velocidade = 0.5
         self.raio = 9  
         self.cor = (255, 0, 0)
         self.direcao = [0, 0]
@@ -17,8 +17,8 @@ class Perseguidor:
         self.intervalo_atualizacao_caminho = 500  # Atualiza caminho a cada 1 segundo
         self.resetar_tempo()
         self.velocidade_atual = self.velocidade
-        self.fator_velocidade = 0.2
-        self.velocidade_max = 6.0
+        self.fator_velocidade = 0.05
+        self.velocidade_max = 2
 
     def resetar_tempo(self):
         self.tempo_inicial = pygame.time.get_ticks()
