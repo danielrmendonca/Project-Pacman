@@ -21,7 +21,7 @@ AZUL = (0, 0, 255)
 BRANCO = (255, 255, 255)
 
 # Definições menu
-FUNDO_MENU = pygame.image.load("ativos/fundo_menu.png")
+FUNDO_MENU = pygame.image.load("ativos/fundo_menu_emanoel.jpg")
 FUNDO_MENU = pygame.transform.scale(FUNDO_MENU, (LARGURA, ALTURA))
 def fonte(tamanho):
     return pygame.font.Font("ativos/PressStart2P-Regular.ttf", tamanho)
@@ -190,13 +190,13 @@ def menu():
 
         MOUSE_POS = pygame.mouse.get_pos()
 
-        MENU_TITULO = fonte(80).render("EMANOEL", True, "#b68f40")
-        MENU_SUBTITULO = fonte(25).render("E O LABIRINTO DISCRETO", True, "#b68f40")
-        TITULO_POS = MENU_TITULO.get_rect(center=(LARGURA/2, 100))
-        SUBTITULO_POS = MENU_SUBTITULO.get_rect(center=(LARGURA/2, 150))
+        MENU_TITULO = fonte(70).render("EMANOEL", True, "#b68f40")
+        MENU_SUBTITULO = fonte(24).render("E O LABIRINTO DISCRETO", True, "#b68f40")
+        TITULO_POS = MENU_TITULO.get_rect(center=(LARGURA/2 +4, 110))
+        SUBTITULO_POS = MENU_SUBTITULO.get_rect(center=(LARGURA/2 +4, 160))
 
-        BOTAO_JOGAR = Botao (pos=(LARGURA/2, 300), text_input="JOGAR", font=fonte(45), base_color="#d7fcd4", hovering_color="White")
-        BOTAO_SAIR = Botao (pos=(LARGURA/2, 500), text_input="SAIR", font=fonte(45), base_color="#d7fcd4", hovering_color="White")
+        BOTAO_JOGAR = Botao (pos=(LARGURA/2, 220), text_input="JOGAR", font=fonte(20), base_color="#d7fcd4", hovering_color="White")
+        BOTAO_SAIR = Botao (pos=(LARGURA/2, 290), text_input="SAIR", font=fonte(20), base_color="#d7fcd4", hovering_color="White")
 
         tela.blit(MENU_TITULO, TITULO_POS)
         tela.blit(MENU_SUBTITULO, SUBTITULO_POS)
