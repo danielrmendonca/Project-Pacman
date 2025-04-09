@@ -190,13 +190,17 @@ def menu():
 
         MOUSE_POS = pygame.mouse.get_pos()
 
-        MENU_TEXTO = fonte(75).render("MAT-MAN", True, "#b68f40")
-        MENU_POS = MENU_TEXTO.get_rect(center=(LARGURA/2, 100))
+        MENU_TITULO = fonte(80).render("EMANOEL", True, "#b68f40")
+        MENU_SUBTITULO = fonte(25).render("E O LABIRINTO DISCRETO", True, "#b68f40")
+        TITULO_POS = MENU_TITULO.get_rect(center=(LARGURA/2, 100))
+        SUBTITULO_POS = MENU_SUBTITULO.get_rect(center=(LARGURA/2, 150))
 
-        BOTAO_JOGAR = Botao (pos=(LARGURA/2, 250), text_input="JOGAR", font=fonte(45), base_color="#d7fcd4", hovering_color="White")
-        BOTAO_SAIR = Botao (pos=(LARGURA/2, 450), text_input="SAIR", font=fonte(45), base_color="#d7fcd4", hovering_color="White")
+        BOTAO_JOGAR = Botao (pos=(LARGURA/2, 300), text_input="JOGAR", font=fonte(45), base_color="#d7fcd4", hovering_color="White")
+        BOTAO_SAIR = Botao (pos=(LARGURA/2, 500), text_input="SAIR", font=fonte(45), base_color="#d7fcd4", hovering_color="White")
 
-        tela.blit(MENU_TEXTO, MENU_POS)
+        tela.blit(MENU_TITULO, TITULO_POS)
+        tela.blit(MENU_SUBTITULO, SUBTITULO_POS)
+
 
         for botao in [BOTAO_JOGAR, BOTAO_SAIR]:
             botao.mudar_cor(MOUSE_POS)
