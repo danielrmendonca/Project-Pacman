@@ -161,3 +161,7 @@ class Perseguidor:
         # Verificação de colisão simplificada (o pathfinding já evita paredes)
         self.x = novo_x
         self.y = novo_y
+    
+    def verificar_colisao(self, player):
+        distancia = math.sqrt((self.x - player.x)**2 + (self.y - player.y)**2)
+        return distancia < (self.raio + player.raio)

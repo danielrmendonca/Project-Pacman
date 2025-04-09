@@ -32,11 +32,26 @@ def encontrar_posicao_inicial():
         for x in range(len(LABIRINTO[y])):
             if LABIRINTO[y][x] == 2:
                 return x * LARGURA_CELULA + LARGURA_CELULA // 2, y * LARGURA_CELULA + LARGURA_CELULA // 2
-    return LARGURA // 2, ALTURA // 2  
+    return LARGURA // 2, ALTURA // 2
+
+def desenhar_contador_moedas(tela, quantidade, largura_tela, altura_tela):
+    fonte = pygame.font.Font("ativos/PressStart2P-Regular.ttf", 20)
+    texto = fonte.render(f"Moedas: {quantidade}", True, (255, 255, 255))
+    
+    pos_x = largura_tela - texto.get_width() - 20
+    pos_y = altura_tela - texto.get_height() - 20
+    
+    tela.blit(texto, (pos_x, pos_y)) 
 
 def jogar():
     player_x, player_y = encontrar_posicao_inicial()
     player = Protagonista(player_x, player_y)
+    vidas = 3  # Adiciona sistema de vidas
+    player_x, player_y = encontrar_posicao_inicial()
+
+    player = Protagonista(player_x, player_y)
+
+    total_moedas = 190
 
     # Inicialização do perseguidor
     perseguidor = Perseguidor(170, 200)  # Agora é um único objeto, não uma lista
@@ -79,6 +94,23 @@ def jogar():
     # ------------------------------- LOOP DO JOGO -------------------------------
     cacada = True
     while cacada:
+        if pontos // 10 >= total_moedas:
+            cacada = False
+            pygame.quit()
+            sys.exit()        
+
+        if perseguidor.verificar_colisao(player):
+            vidas -= 1
+            if vidas <= 0:
+                cacada = False
+                pygame.quit()
+                sys.exit()
+            else:
+                # Reseta posição do jogador
+                player.x, player.y = encontrar_posicao_inicial()
+                # Reseta posição do perseguidor (opcional)
+            perseguidor.x, perseguidor.y = 170, 200
+
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 cacada = False
@@ -145,6 +177,8 @@ def jogar():
 
         # Desenhar perseguidor (corrigido o nome do método)
         perseguidor.desenhar(tela)  # Era "desennhar" no seu código original
+
+        desenhar_contador_moedas(tela, pontos // 10, LARGURA, ALTURA)
 
         pygame.display.flip()
         relogio.tick(60)
