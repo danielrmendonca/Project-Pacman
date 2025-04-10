@@ -40,7 +40,6 @@ class Labirinto:
                             tile = self.dados_tmx.get_tile_image(x, y, i)
                             if tile:
                                 tela.blit(tile, (x * self.TAMANHO_TILE, y * self.TAMANHO_TILE))
-
     def get_matriz_labirinto(self):
         """Retorna uma matriz onde 0 = vazio e 1 = parede"""
         matriz = []

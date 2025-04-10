@@ -11,6 +11,7 @@ from Spawn import SpawnManager
 from Botao import Botao
 from Monitor import Monitor
 from Buff_velocidade import Buff_velocidade
+from Matriz import maze
 
 pygame.init()
 
@@ -21,7 +22,6 @@ ALTURA = labirinto.ALTURA_TELA
 tela = pygame.display.set_mode((LARGURA, ALTURA))
 pygame.display.set_caption("Pac-Man")
 labirinto.carregar_mapa()
-maze = ''
 
 PRETO = (0, 0, 0)
 AZUL = (0, 0, 255)
@@ -69,17 +69,16 @@ def jogo_principal():
                             ))
     print(f"Total de paredes: {len(paredes)}")
 
-    matriz = labirinto.get_matriz_labirinto()  # Matriz 2D com 0s e 1s
-    print(matriz)
+    matriz = maze
 
     moedas = []
+    monitores = []
     itens_especiais = []
     spawner = SpawnManager()
     powerups = []
     powerup_ativo = False
-
-    matriz = labirinto.get_matriz_labirinto()
     moedas = Coletaveis.criar_moedas_na_matriz(matriz, TAMANHO_CELULA)
+    monitores = Monitor.criar_monitores_na_matriz(matriz, TAMANHO_CELULA)
     pontuacao = 0
     relogio = pygame.time.Clock()
 
@@ -117,6 +116,10 @@ def jogo_principal():
             if item.verificar_colisao(jogador):
                 itens_especiais.remove(item)
 
+        for monitor in monitores[:]:
+            if monitor.verificar_colisao(jogador):
+                monitores.remove(monitor)
+
         if random.random() < 0.3 and not powerup_ativo:
             spawner.tentar_spawn_buff(moedas, itens_especiais, powerups, powerup_ativo, buff_aplicado= Buff_velocidade)
 
@@ -131,6 +134,8 @@ def jogo_principal():
             moeda.desenhar(tela)
         for item in itens_especiais:
             item.desenhar(tela)
+        for monitor in monitores[:]:
+            monitor.desenhar(tela)
         for powerup in powerups[:]:
             powerup.desenhar(tela)
             if powerup.verificar_colisao(jogador):

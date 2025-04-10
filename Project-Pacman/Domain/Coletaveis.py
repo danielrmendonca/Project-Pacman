@@ -17,10 +17,11 @@ class Coletaveis:
         for y in range(len(matriz)):
             for x in range(len(matriz[y])):
                 if matriz[y][x] == 0:  # Verifica se é chão
+                    if random.random() < 0.3:
                     # Calcula a posição central do tile
-                    pos_x = x * tamanho_tile + tamanho_tile // 2
-                    pos_y = y * tamanho_tile + tamanho_tile // 2
-                    moedas.append(Coletaveis(pos_x, pos_y))
+                        pos_x = x * tamanho_tile + tamanho_tile // 2
+                        pos_y = y * tamanho_tile + tamanho_tile // 2
+                        moedas.append(Coletaveis(pos_x, pos_y))
         return moedas
 
 
