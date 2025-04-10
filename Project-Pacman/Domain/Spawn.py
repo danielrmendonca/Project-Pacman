@@ -15,7 +15,7 @@ class SpawnManager:
     def adicionar_local_monitor(self, x, y):
         self.locais_monitores.append((y, x))
 
-    def tentar_spawn_buff(self, moedas, monitores, buffs, buff_on_map):
+    def tentar_spawn_buff(self, moedas, monitores, buffs, buff_on_map, buff_aplicado):
         tempo_atual = pygame.time.get_ticks()
         if tempo_atual - self.tempo_ultimo_spawn > self.intervalo_spawn:
             # Cria lista de todas as posições ocupadas
@@ -41,5 +41,5 @@ class SpawnManager:
             
             if locais_disponiveis and not buff_on_map:
                 x, y = random.choice(locais_disponiveis)
-                buffs.append(Buff_velocidade(x, y))
+                buffs.append(buff_aplicado(x, y))
                 self.tempo_ultimo_spawn = tempo_atual

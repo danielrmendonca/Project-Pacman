@@ -41,6 +41,23 @@ class Labirinto:
                             if tile:
                                 tela.blit(tile, (x * self.TAMANHO_TILE, y * self.TAMANHO_TILE))
 
+    def get_matriz_labirinto(self):
+        """Retorna uma matriz onde 0 = vazio e 1 = parede"""
+        matriz = []
+        for y in range(self.dados_tmx.height):
+            linha = []
+            for x in range(self.dados_tmx.width):
+                # Verifica se há tile de colisão na posição (x, y)
+                tem_parede = False
+                for camada in self.dados_tmx.layers:
+                    if isinstance(camada, pytmx.TiledTileLayer) and "colisão" in camada.name.lower():
+                        if camada.data[y][x] != 0:
+                            tem_parede = True
+                            break
+                linha.append(1 if tem_parede else 0)
+            matriz.append(linha)
+        return matriz
+
 if __name__ == "__main__":
     pygame.init()
     labirinto = Labirinto()

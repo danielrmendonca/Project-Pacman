@@ -9,6 +9,8 @@ from Perseguidor import Perseguidor
 from Labirinto import Labirinto
 from Spawn import SpawnManager
 from Botao import Botao
+from Monitor import Monitor
+from Buff_velocidade import Buff_velocidade
 
 pygame.init()
 
@@ -19,6 +21,7 @@ ALTURA = labirinto.ALTURA_TELA
 tela = pygame.display.set_mode((LARGURA, ALTURA))
 pygame.display.set_caption("Pac-Man")
 labirinto.carregar_mapa()
+maze = ''
 
 PRETO = (0, 0, 0)
 AZUL = (0, 0, 255)
@@ -65,6 +68,9 @@ def jogo_principal():
                                 TAMANHO_CELULA
                             ))
     print(f"Total de paredes: {len(paredes)}")
+
+    matriz = labirinto.get_matriz_labirinto()  # Matriz 2D com 0s e 1s
+    print(matriz)
 
     moedas = []
     itens_especiais = []
@@ -129,7 +135,7 @@ def jogo_principal():
                 itens_especiais.remove(item)
 
         if random.random() < 0.3 and not powerup_ativo:
-            spawner.tentar_spawn_buff(moedas, itens_especiais, powerups, powerup_ativo)
+            spawner.tentar_spawn_buff(moedas, itens_especiais, powerups, powerup_ativo, buff_aplicado= Buff_velocidade)
 
         tela.fill(PRETO)
         labirinto.desenhar(tela)
@@ -138,7 +144,7 @@ def jogo_principal():
         # for parede in paredes:
         #     pygame.draw.rect(tela, VERMELHO, parede, 1)
 
-        for moeda in moedas:
+        for moeda in moedas[:]:
             moeda.desenhar(tela)
         for item in itens_especiais:
             item.desenhar(tela)
