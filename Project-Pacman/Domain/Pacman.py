@@ -78,25 +78,8 @@ def jogo_principal():
     powerups = []
     powerup_ativo = False
 
-    for camada in labirinto.dados_tmx.layers:
-        if isinstance(camada, pytmx.TiledTileLayer):
-            if "moedas" in camada.name.lower():
-                for y in range(camada.height):
-                    for x in range(camada.width):
-                        if camada.data[y][x] != 0:
-                            pos_x = x * TAMANHO_CELULA + TAMANHO_CELULA // 2
-                            pos_y = y * TAMANHO_CELULA + TAMANHO_CELULA // 2
-                            moedas.append(Coletaveis(pos_x, pos_y))
-                            spawner.adicionar_local_moeda(pos_x, pos_y)
-            elif "itens" in camada.name.lower():
-                for y in range(camada.height):
-                    for x in range(camada.width):
-                        if camada.data[y][x] != 0:
-                            pos_x = x * TAMANHO_CELULA + TAMANHO_CELULA // 2
-                            pos_y = y * TAMANHO_CELULA + TAMANHO_CELULA // 2
-                            itens_especiais.append(Monitor(pos_x, pos_y))
-                            spawner.adicionar_local_monitor(pos_x, pos_y)
-
+    matriz = labirinto.get_matriz_labirinto()
+    moedas = Coletaveis.criar_moedas_na_matriz(matriz, TAMANHO_CELULA)
     pontuacao = 0
     relogio = pygame.time.Clock()
 

@@ -8,8 +8,21 @@ class Coletaveis:
         self.x = x
         self.y = y
         self.raio = 5
-        self.cor = (255, 255, 255) 
+        self.cor = (255, 255, 255)  # Cor branca (pode ajustar)
         self.consumido = False
+
+    @staticmethod
+    def criar_moedas_na_matriz(matriz, tamanho_tile):
+        moedas = []
+        for y in range(len(matriz)):
+            for x in range(len(matriz[y])):
+                if matriz[y][x] == 0:  # Verifica se é chão
+                    # Calcula a posição central do tile
+                    pos_x = x * tamanho_tile + tamanho_tile // 2
+                    pos_y = y * tamanho_tile + tamanho_tile // 2
+                    moedas.append(Coletaveis(pos_x, pos_y))
+        return moedas
+
 
     def desenhar(self, tela):
         if not self.consumido:
