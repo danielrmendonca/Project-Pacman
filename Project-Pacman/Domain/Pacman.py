@@ -161,23 +161,23 @@ def menu_principal():
         tela.blit(FUNDO_MENU, (0, 0))
         pos_mouse = pygame.mouse.get_pos()
 
-        titulo = carregar_fonte(70).render("PAC-MAN", True, (182, 143, 64))
+        titulo = carregar_fonte(70).render("MAT-MAN", True, (182, 143, 64))
         subtitulo = carregar_fonte(24).render("O Labirinto Misterioso", True, (182, 143, 64))
         
         botao_jogar = Botao(
-            pos=(LARGURA//2, 220),
+            pos=(LARGURA//2, 250),
             text_input="JOGAR",
             font=carregar_fonte(20),
-            base_color="#d7fcd4",
-            hovering_color=BRANCO
+            base_color=BRANCO,
+            hovering_color=AZUL
         )
         
         botao_sair = Botao(
-            pos=(LARGURA//2, 290),
+            pos=(LARGURA//2, 325),
             text_input="SAIR",
             font=carregar_fonte(20),
-            base_color="#d7fcd4",
-            hovering_color=BRANCO
+            base_color=BRANCO,
+            hovering_color=AZUL
         )
 
         tela.blit(titulo, titulo.get_rect(center=(LARGURA//2 + 4, 110)))
