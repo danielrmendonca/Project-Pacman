@@ -232,9 +232,9 @@ def menu_principal():
         fonte_subtitulo = carregar_fonte(20)
         fonte_botao = carregar_fonte(16)
 
-        titulo = fonte_titulo.render("Emanoel", True, (182, 143, 64))
+        titulo = fonte_titulo.render("da Saga Emanoel:", True, (182, 143, 64))
         subtitulo = fonte_subtitulo.render(
-            "E o Labirinto Misterioso", True, (182, 143, 64))
+            "O Labirinto Discreto", True, (182, 143, 64))
 
         botao_jogar = Botao(
             pos=(LARGURA // 2, 250),
