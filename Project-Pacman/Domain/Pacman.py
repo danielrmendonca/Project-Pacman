@@ -28,34 +28,47 @@ tela = pygame.display.set_mode((LARGURA, ALTURA))
 pygame.display.set_caption("Pacman")
 
 # Carregar o fundo do menu com caminho relativo para 'imagens'
-FUNDO_MENU = pygame.image.load(os.path.join(os.path.dirname(__file__), "..", "..", "imagens", "fundo_menu.jpg"))
+FUNDO_MENU = pygame.image.load(os.path.join(os.path.dirname(
+    __file__), "..", "..", "imagens", "fundo_menu.jpg"))
 FUNDO_MENU = pygame.transform.scale(FUNDO_MENU, (LARGURA, ALTURA))
 
-FUNDO_VITORIA = pygame.image.load(os.path.join(os.path.dirname(__file__), "..", "..", "imagens", "fundo_vitoria.png"))
+FUNDO_VITORIA = pygame.image.load(os.path.join(os.path.dirname(
+    __file__), "..", "..", "imagens", "fundo_vitoria.png"))
 FUNDO_VITORIA = pygame.transform.scale(FUNDO_VITORIA, (LARGURA, ALTURA))
 
-FUNDO_DERROTA = pygame.image.load(os.path.join(os.path.dirname(__file__), "..", "..", "imagens", "fundo_derrota.png"))
+FUNDO_DERROTA = pygame.image.load(os.path.join(os.path.dirname(
+    __file__), "..", "..", "imagens", "fundo_derrota.png"))
 FUNDO_DERROTA = pygame.transform.scale(FUNDO_DERROTA, (LARGURA, ALTURA))
 
 # Função para carregar a fonte personalizada
+
+
 def carregar_fonte(tamanho):
-    fonte_path = os.path.join(os.path.dirname(__file__), "..", "..", "imagens", "PressStart2P-Regular.ttf")
+    fonte_path = os.path.join(os.path.dirname(
+        __file__), "..", "..", "imagens", "PressStart2P-Regular.ttf")
     return pygame.font.Font(fonte_path, tamanho)
+
 
 # Instanciar o labirinto (sem carregar o mapa ainda)
 labirinto = Labirinto()
 
 # Função para encontrar posição inicial
+
+
 def encontrar_posicao_inicial():
     return LARGURA // 2, ALTURA // 2  # (648, 360)
 
 # Função para desenhar contador de moedas
+
+
 def desenhar_contador_moedas(tela, pontuacao):
     fonte = carregar_fonte(24)  # Usa a fonte personalizada
     texto = fonte.render(f"Moedas: {pontuacao}", True, BRANCO)
     tela.blit(texto, (10, 10))
 
 # Loop principal do jogo
+
+
 def jogo_principal():
     # Carregar o mapa aqui, dentro da função
     try:
@@ -68,10 +81,10 @@ def jogo_principal():
     pos_x, pos_y = encontrar_posicao_inicial()
     jogador = Protagonista(pos_x, pos_y)
     vidas = 3
-
+    spawner = SpawnManager()
     matriz = maze
-    moedas = Coletaveis.criar_moedas_na_matriz(matriz, TAMANHO_CELULA)
-    monitores = Monitor.criar_monitores_na_matriz(matriz, TAMANHO_CELULA)
+    moedas = Coletaveis.criar_moedas_na_matriz(matriz, TAMANHO_CELULA, spawner)
+    monitores = Monitor.criar_monitores_na_matriz(matriz, TAMANHO_CELULA, spawner)
     total_moedas = len(moedas)
 
     inimigo = Perseguidor(170, 200)
@@ -98,12 +111,12 @@ def jogo_principal():
     itens_especiais = []
     powerups = []
     powerup_ativo = False
-    spawner = SpawnManager()
+    tempo_powerup = 0
 
     rodando = True
     vitoria = False
     while rodando:
-        if pontuacao >= 3:
+        if pontuacao >= total_moedas:
             rodando = False
             vitoria = True
             tela_resultado(vitoria)
@@ -146,8 +159,12 @@ def jogo_principal():
             if monitor.verificar_colisao(jogador):
                 monitores.remove(monitor)
 
-        if random.random() < 0.3 and not powerup_ativo:
-            spawner.tentar_spawn_buff(moedas, itens_especiais, powerups, powerup_ativo, buff_aplicado=Buff_velocidade)
+        if not powerup_ativo and len(powerups)==0:
+            buff_spawnado = spawner.tentar_spawn_buff(
+                    moedas, monitores, powerups, powerup_ativo, buff_aplicado=Buff_velocidade)
+            
+        if buff_spawnado:
+            powerup_ativo = True
 
         # Desenho na tela
         tela.fill(PRETO)  # Limpa a tela primeiro
@@ -164,6 +181,11 @@ def jogo_principal():
             if powerup.verificar_colisao(jogador):
                 powerups.remove(powerup)
                 powerup_ativo = True
+                tempo_powerup = pygame.time.get_ticks()
+                
+         # Verifica se o powerup expirou (5 segundos)
+        if powerup_ativo and (pygame.time.get_ticks() - tempo_powerup > 5000):
+            powerup_ativo = False
 
         jogador.modelo_personagem(tela)
         inimigo.desenhar(tela)
@@ -174,6 +196,8 @@ def jogo_principal():
         relogio.tick(60)
 
 # Menu principal
+
+
 def menu_principal():
     ativo = True
     while ativo:
@@ -186,8 +210,9 @@ def menu_principal():
         fonte_botao = carregar_fonte(16)
 
         titulo = fonte_titulo.render("Emanoel", True, (182, 143, 64))
-        subtitulo = fonte_subtitulo.render("E o Labirinto Misterioso", True, (182, 143, 64))
-        
+        subtitulo = fonte_subtitulo.render(
+            "E o Labirinto Misterioso", True, (182, 143, 64))
+
         botao_jogar = Botao(
             pos=(LARGURA // 2, 250),
             text_input="JOGAR",
@@ -195,7 +220,7 @@ def menu_principal():
             base_color=BRANCO,
             hovering_color=AZUL
         )
-        
+
         botao_sair = Botao(
             pos=(LARGURA // 2, 325),
             text_input="SAIR",
@@ -205,7 +230,8 @@ def menu_principal():
         )
 
         tela.blit(titulo, titulo.get_rect(center=(LARGURA // 2 + 4, 110)))
-        tela.blit(subtitulo, subtitulo.get_rect(center=(LARGURA // 2 + 4, 160)))
+        tela.blit(subtitulo, subtitulo.get_rect(
+            center=(LARGURA // 2 + 4, 160)))
 
         for botao in [botao_jogar, botao_sair]:
             botao.mudar_cor(pos_mouse)
@@ -227,6 +253,7 @@ def menu_principal():
 
         pygame.display.update()
 
+
 def tela_resultado(vitoria):
 
     # Transição de tela para os resultados
@@ -238,7 +265,7 @@ def tela_resultado(vitoria):
     ativo = True
     while ativo:
 
-        fade_alpha -=10
+        fade_alpha -= 10
         fade_img.set_alpha(fade_alpha)
         if vitoria:
             tela.blit(FUNDO_VITORIA, (0, 0))
@@ -248,19 +275,21 @@ def tela_resultado(vitoria):
             fonte_subtitulo = carregar_fonte(20)
             fonte_botao = carregar_fonte(16)
 
-            titulo = fonte_titulo.render("VOCÊ CONSEGUIU!", True, (182, 143, 64))
-            subtitulo = fonte_subtitulo.render("De primeira! Agora é estudar para cálculo.", True, (182, 143, 64))
+            titulo = fonte_titulo.render(
+                "VOCÊ CONSEGUIU!", True, (182, 143, 64))
+            subtitulo = fonte_subtitulo.render(
+                "De primeira! Agora é estudar para cálculo.", True, (182, 143, 64))
 
             botao_jogar = Botao(
-                pos=(LARGURA // 2 -10, 200),
+                pos=(LARGURA // 2 - 10, 200),
                 text_input="JOGAR NOVAMENTE",
                 font=fonte_botao,
                 base_color=BRANCO,
                 hovering_color=AZUL
             )
-            
+
             botao_sair = Botao(
-                pos=(LARGURA // 2 -10, 250),
+                pos=(LARGURA // 2 - 10, 250),
                 text_input="APROVEITAR AS FÉRIAS",
                 font=fonte_botao,
                 base_color=BRANCO,
@@ -268,7 +297,8 @@ def tela_resultado(vitoria):
             )
 
             tela.blit(titulo, titulo.get_rect(center=(LARGURA // 2 + 4, 100)))
-            tela.blit(subtitulo, subtitulo.get_rect(center=(LARGURA // 2 + 4, 150)))
+            tela.blit(subtitulo, subtitulo.get_rect(
+                center=(LARGURA // 2 + 4, 150)))
 
         else:
             tela.blit(FUNDO_DERROTA, (0, 0))
@@ -279,9 +309,11 @@ def tela_resultado(vitoria):
             fonte_subtitulo = carregar_fonte(15)
             fonte_botao = carregar_fonte(15)
 
-            titulo = fonte_titulo.render("VOCÊ FOI PEGO!", True, (182, 143, 64))
-            subtitulo = fonte_subtitulo.render("Devia ter estudado mais.", True, (182, 143, 64))
-            
+            titulo = fonte_titulo.render(
+                "VOCÊ FOI PEGO!", True, (182, 143, 64))
+            subtitulo = fonte_subtitulo.render(
+                "Devia ter estudado mais.", True, (182, 143, 64))
+
             botao_jogar = Botao(
                 pos=(LARGURA // 2, 150),
                 text_input="TENTAR NOVAMENTE",
@@ -289,7 +321,7 @@ def tela_resultado(vitoria):
                 base_color=BRANCO,
                 hovering_color=AZUL
             )
-            
+
             botao_sair = Botao(
                 pos=(LARGURA // 2, 200),
                 text_input="SAIR",
@@ -299,7 +331,8 @@ def tela_resultado(vitoria):
             )
 
             tela.blit(titulo, titulo.get_rect(center=(LARGURA // 2 + 4, 85)))
-            tela.blit(subtitulo, subtitulo.get_rect(center=(LARGURA // 2 + 4, 115)))
+            tela.blit(subtitulo, subtitulo.get_rect(
+                center=(LARGURA // 2 + 4, 115)))
         tela.blit(fade_img, fade)
 
         for botao in [botao_jogar, botao_sair]:

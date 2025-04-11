@@ -2,6 +2,7 @@ import pygame
 import random
 import os
 from Coletaveis import Coletaveis
+from Spawn import SpawnManager
 class Monitor(Coletaveis):
     def __init__(self, x, y):
         super().__init__(x, y)
@@ -41,7 +42,7 @@ class Monitor(Coletaveis):
             pygame.draw.circle(tela, self.cor, (int(self.x), int(self.y)), self.raio)
 
     @staticmethod
-    def criar_monitores_na_matriz(matriz, tamanho_tile):
+    def criar_monitores_na_matriz(matriz, tamanho_tile, spawn):
         monitores = []
         for y in range(len(matriz)):
             for x in range(len(matriz[y])):
@@ -50,4 +51,5 @@ class Monitor(Coletaveis):
                     pos_x = x * tamanho_tile + tamanho_tile // 2
                     pos_y = y * tamanho_tile + tamanho_tile // 2
                     monitores.append(Monitor(pos_x, pos_y))
+                    spawn.adicionar_local_monitor(pos_x, pos_y)
         return monitores
