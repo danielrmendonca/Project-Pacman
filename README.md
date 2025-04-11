@@ -8,14 +8,14 @@
 
 <div align="center">
   
-| Integrante | Função |
+| Integrante | Funções |
 |-----------|------|
-| Daniel Ramos <drm3>  | Telas, transições, menus, resultados, loop principal, documentação. |
-| Hugo Jose <hjbc>   | Interface da pontuação, mecânicas de jogo do spawn. |
-| Gabriel Nascimento <gnss>   | Sprites, design, mapas, integração do design com o código. |
-| Gustavo Ferreira <glfb>    | Algoritmo principal do jogo, mecânica do jogo em geral, perseguição, coletáveis, mapa. |
-| Rodrigo Neves <ran>    | Design, sprites, visual, artes, telas. |
-| Wallace Leão <wgsl>    | Mecânica do jogo em geral, colisões, coletáveis, buffs. |
+| Daniel Ramos `<drm3>`  | Telas, transições, menus, resultados, loop principal, documentação. |
+| Hugo Jose `<hjbc>`   | Interface da pontuação, mecânicas de jogo do spawn. |
+| Gabriel Nascimento `<gnss>`   | Sprites, design, mapas, integração do design com o código. |
+| Gustavo Ferreira `<glfb>`    | Algoritmo principal do jogo, mecânica do jogo em geral, perseguição, coletáveis, mapa. |
+| Rodrigo Neves `<ran>`    | Design, sprites, visual, artes, telas. |
+| Wallace Leão `<wgsl>`    | Mecânica do jogo em geral, colisões, coletáveis, buffs. |
 
 </div>
 
