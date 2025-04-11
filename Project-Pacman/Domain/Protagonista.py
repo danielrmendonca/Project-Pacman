@@ -23,12 +23,10 @@ class Protagonista:
 
         # Carregar spritesheet
         sprite_path = os.path.join(os.path.dirname(__file__), "..", "..", "sprites", "protagonista.png")
-        try:
-            self.spritesheet = pygame.image.load(sprite_path).convert_alpha()
-            print(f"Spritesheet carregado: {self.spritesheet.get_size()}")
-        except FileNotFoundError as e:
-            print(f"Erro: Não foi possível encontrar 'protagonista.png' em {sprite_path}")
-            raise
+        
+        self.spritesheet = pygame.image.load(sprite_path).convert_alpha()
+        print(f"Spritesheet carregado: {self.spritesheet.get_size()}")
+        
 
         # Extrair sprites
         self.sprites = self.get_sprites(self.spritesheet, 54, 13, 64, 64)

@@ -34,12 +34,10 @@ class Perseguidor:
 
         # Carregar spritesheet
         sprite_path = os.path.join(os.path.dirname(__file__), "..", "..", "sprites", "perseguidor.png")
-        try:
-            self.spritesheet = pygame.image.load(sprite_path).convert_alpha()
-            print(f"Perseguidor spritesheet carregado: {self.spritesheet.get_size()}")
-        except FileNotFoundError as e:
-            print(f"Erro: Não foi possível encontrar 'perseguidor.png' em {sprite_path}")
-            raise
+        
+        self.spritesheet = pygame.image.load(sprite_path).convert_alpha()
+        print(f"Perseguidor spritesheet carregado: {self.spritesheet.get_size()}")
+        
 
         # Extrair sprites
         self.sprites = self.get_sprites(self.spritesheet, 54, 13, 64, 64)
@@ -81,20 +79,16 @@ class Perseguidor:
             self.anim_frame = (self.anim_frame + 1) % len(self.animations[self.direction])
             self.last_anim_update = now
 
-        try:
-            sprite = self.animations[self.direction][self.anim_frame]
-            # Desenha o sprite centralizado (mesmo sistema do protagonista)
-            tela.blit(
-                sprite,
-                (int(self.x - self.sprite_size[0] // 2 + self.sprite_offset_x),
-                 int(self.y - self.sprite_size[1] // 2 + self.sprite_offset_y))
-            )
-            # Removido o desenho da hitbox para torná-la invisível
-            # hitbox = self.get_hitbox()
-            # pygame.draw.rect(tela, (0, 255, 0), hitbox, 2)
-        except IndexError:
-            print(f"Erro: Animação inválida ({self.direction}, frame {self.anim_frame})")
-            pygame.draw.circle(tela, self.cor, (int(self.x), int(self.y)), self.raio)
+        
+        sprite = self.animations[self.direction][self.anim_frame]
+        # Desenha o sprite centralizado (mesmo sistema do protagonista)
+        tela.blit(
+            sprite,
+            (int(self.x - self.sprite_size[0] // 2 + self.sprite_offset_x),
+                int(self.y - self.sprite_size[1] // 2 + self.sprite_offset_y))
+        )
+        
+        
 
     def get_hitbox(self):
         """Retorna a hitbox circular como um retângulo (para colisão)"""

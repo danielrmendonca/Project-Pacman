@@ -19,22 +19,9 @@ class Coletaveis:
         # Carregar o sprite 'branca.png' com caminho relativo
         sprite_path = os.path.join(os.path.dirname(
             __file__), "..", "sprites", "branca.png")
-        try:
-            self.sprite = pygame.image.load(sprite_path).convert_alpha()
-            self.sprite = pygame.transform.scale(
-                self.sprite, self.sprite_size)  # Redimensiona o sprite
-            print(f"Sprite 'branca.png' carregado: {self.sprite.get_size()}")
-        except FileNotFoundError:
-            print(
-                f"Erro: Sprite 'branca.png' não encontrado em {sprite_path}. Usando círculo branco como fallback.")
-            self.sprite = pygame.Surface(
-                (self.sprite_size[0], self.sprite_size[1]))
-            self.sprite.fill((255, 255, 255))  # Fallback: quadrado branco
-        except Exception as e:
-            print(f"Erro ao carregar sprite 'branca.png': {e}")
-            self.sprite = pygame.Surface(
-                (self.sprite_size[0], self.sprite_size[1]))
-            self.sprite.fill((255, 255, 255))
+        self.sprite = pygame.image.load(sprite_path).convert_alpha()
+        self.sprite = pygame.transform.scale(
+            self.sprite, self.sprite_size)  # Redimensiona o sprite
 
     @staticmethod
     def criar_moedas_na_matriz(matriz, tamanho_tile, spawn):

@@ -25,12 +25,10 @@ class Monitor(Coletaveis):
         sprite_file = random.choice(sprite_files)
         sprite_path = os.path.join(sprite_dir, sprite_file)
         
-        try:
-            sprite = pygame.image.load(sprite_path).convert_alpha()
-            return pygame.transform.scale(sprite, self.sprite_size)
-        except Exception as e:
-            print(f"Erro ao carregar sprite: {sprite_path} - {e}")
-            return None
+        
+        sprite = pygame.image.load(sprite_path).convert_alpha()
+        return pygame.transform.scale(sprite, self.sprite_size)
+        
     
     def desenhar(self, tela):
         if self.sprite:

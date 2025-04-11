@@ -3,6 +3,7 @@ import pytmx
 import sys
 import random
 import os
+import pygame.mixer
 from Protagonista import Protagonista
 from Perseguidor import Perseguidor
 from Botao import Botao
@@ -26,6 +27,13 @@ AMARELO = (255, 255, 0)
 pygame.init()
 tela = pygame.display.set_mode((LARGURA, ALTURA))
 pygame.display.set_caption("Pacman")
+#inicalizar o som
+pygame.mixer.init()
+
+#CARREGAR a musica
+pygame.mixer.music.load('imagens\music.mp3')
+pygame.mixer.music.set_volume(0.05)
+pygame.mixer.music.play(-1)
 
 # Carregar o fundo do menu com caminho relativo para 'imagens'
 FUNDO_MENU = pygame.image.load(os.path.join(os.path.dirname(
@@ -82,12 +90,7 @@ def jogo_principal():
     vida = 3
     velocidade_buff_ativa = False
     # Carregar o mapa aqui, dentro da função
-    try:
-        labirinto.carregar_mapa()
-    except Exception as e:
-        print(f"Erro ao carregar o mapa: {e}")
-        pygame.quit()
-        sys.exit()
+    labirinto.carregar_mapa()
 
     pos_x, pos_y = encontrar_posicao_inicial()
     jogador = Protagonista(pos_x, pos_y)
