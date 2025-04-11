@@ -56,7 +56,7 @@ labirinto = Labirinto()
 
 
 def encontrar_posicao_inicial():
-    return LARGURA // 2, ALTURA // 2  # (648, 360)
+    return (LARGURA // 2) +10, (ALTURA // 2) +10  # (648, 360)
 
 # Função para desenhar contador de moedas
 
