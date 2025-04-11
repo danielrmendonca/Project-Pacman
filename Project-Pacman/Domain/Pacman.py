@@ -70,6 +70,7 @@ def desenhar_contador_moedas(tela, pontuacao):
 
 
 def jogo_principal():
+    velocidade_buff_ativa = False
     # Carregar o mapa aqui, dentro da função
     try:
         labirinto.carregar_mapa()
@@ -116,7 +117,7 @@ def jogo_principal():
     rodando = True
     vitoria = False
     while rodando:
-        if pontuacao >= total_moedas:
+        if pontuacao >= 175:
             rodando = False
             vitoria = True
             tela_resultado(vitoria)
@@ -182,10 +183,15 @@ def jogo_principal():
                 powerups.remove(powerup)
                 powerup_ativo = True
                 tempo_powerup = pygame.time.get_ticks()
+                jogador.velocidade *= 2  # Dobra a velocidade
+                velocidade_buff_ativa = True  # Novo flag
                 
          # Verifica se o powerup expirou (5 segundos)
         if powerup_ativo and (pygame.time.get_ticks() - tempo_powerup > 5000):
             powerup_ativo = False
+            if velocidade_buff_ativa:
+                jogador.velocidade //= 2  # Restaura a velocidade
+                velocidade_buff_ativa = False
 
         jogador.modelo_personagem(tela)
         inimigo.desenhar(tela)
