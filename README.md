@@ -44,7 +44,7 @@ Colétavel de velocidade.
 Coletável de intangibilidade.
 
 ### 👾 Perseguidor
-Um NPC que patrulha o mapa com o objetivo de capturar o jogador. O contato com ele resulta em falha. Seu comportamento é parcialmente aleatório, com padrões de perseguição baseados na posição do jogador.
+Professor que patrulha o mapa com o objetivo de capturar o jogador. O contato com ele resulta em perder uma vida. Seu comportamento é parcialmente aleatório, com padrões de perseguição baseados na posição do jogador.
 
 ---
 
