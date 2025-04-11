@@ -37,7 +37,6 @@ FUNDO_VITORIA = pygame.transform.scale(FUNDO_VITORIA, (LARGURA, ALTURA))
 FUNDO_DERROTA = pygame.image.load(os.path.join(os.path.dirname(__file__), "..", "..", "imagens", "fundo_derrota.png"))
 FUNDO_DERROTA = pygame.transform.scale(FUNDO_DERROTA, (LARGURA, ALTURA))
 
-
 # Função para carregar a fonte personalizada
 def carregar_fonte(tamanho):
     fonte_path = os.path.join(os.path.dirname(__file__), "..", "..", "imagens", "PressStart2P-Regular.ttf")
@@ -104,7 +103,7 @@ def jogo_principal():
     rodando = True
     vitoria = False
     while rodando:
-        if pontuacao >= total_moedas:
+        if pontuacao >= 3:
             rodando = False
             vitoria = True
             tela_resultado(vitoria)
@@ -229,9 +228,18 @@ def menu_principal():
         pygame.display.update()
 
 def tela_resultado(vitoria):
+
+    # Transição de tela para os resultados
+    fade_img = pygame.Surface((LARGURA, ALTURA)).convert_alpha()
+    fade = fade_img.get_rect()
+    fade_img.fill(PRETO)
+    fade_alpha = 255
+
     ativo = True
     while ativo:
 
+        fade_alpha -=10
+        fade_img.set_alpha(fade_alpha)
         if vitoria:
             tela.blit(FUNDO_VITORIA, (0, 0))
             pos_mouse = pygame.mouse.get_pos()
@@ -242,7 +250,7 @@ def tela_resultado(vitoria):
 
             titulo = fonte_titulo.render("VOCÊ CONSEGUIU!", True, (182, 143, 64))
             subtitulo = fonte_subtitulo.render("De primeira! Agora é estudar para cálculo.", True, (182, 143, 64))
-            
+
             botao_jogar = Botao(
                 pos=(LARGURA // 2 -10, 200),
                 text_input="JOGAR NOVAMENTE",
@@ -292,6 +300,7 @@ def tela_resultado(vitoria):
 
             tela.blit(titulo, titulo.get_rect(center=(LARGURA // 2 + 4, 85)))
             tela.blit(subtitulo, subtitulo.get_rect(center=(LARGURA // 2 + 4, 115)))
+        tela.blit(fade_img, fade)
 
         for botao in [botao_jogar, botao_sair]:
             botao.mudar_cor(pos_mouse)
