@@ -85,7 +85,7 @@ Biblioteca padrão usada para interação com o sistema operacional, como manipu
 ### 🛠️ Ferramentas
 
 #### Miro
-Ferramente para brainstorm inicial e divisao de funções levando em consideração grau de urgência.
+Ferramenta para brainstorm inicial e divisao de funções levando em consideração grau de urgência.
 
 #### Visual Studio Code
 Editor de código-fonte utilizado para desenvolvimento do projeto. Oferece integração com Git, extensões úteis e um ambiente amigável para desenvolvimento em equipe e organizado para aplicação de POO.
