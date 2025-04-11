@@ -10,7 +10,7 @@
   
 | Integrante | Função |
 |-----------|------|
-| Daniel Ramos <drm3>  | Telas, transições, menus, resultados, loop principal. |
+| Daniel Ramos <drm3>  | Telas, transições, menus, resultados, loop principal, documentação. |
 | Hugo Jose <hjbc>   | Interface da pontuação, mecânicas de jogo do spawn. |
 | Gabriel Nascimento <gnss>   | Sprites, design, mapas, integração do design com o código. |
 | Gustavo Ferreira <glfb>    | Algoritmo principal do jogo, mecânica do jogo em geral, perseguição, coletáveis, mapa. |
