@@ -33,11 +33,14 @@ class Perseguidor:
         self.direction = "baixo"
 
         # Carregar spritesheet
-        sprite_path = r"C:\Users\Gabriel Sousa\OneDrive - UFPE\Área de Trabalho\Project-Pacman-2\sprites\perseguidor.png"
+        sprite_path = os.path.join(os.path.dirname(__file__), "..", "..", "sprites", "perseguidor.png")
+        try:
+            self.spritesheet = pygame.image.load(sprite_path).convert_alpha()
+            print(f"Perseguidor spritesheet carregado: {self.spritesheet.get_size()}")
+        except FileNotFoundError as e:
+            print(f"Erro: Não foi possível encontrar 'perseguidor.png' em {sprite_path}")
+            raise
 
-        self.spritesheet = pygame.image.load(sprite_path).convert_alpha()
-        print(f"Perseguidor spritesheet carregado: {self.spritesheet.get_size()}")
-        
         # Extrair sprites
         self.sprites = self.get_sprites(self.spritesheet, 54, 13, 64, 64)
         
@@ -56,11 +59,9 @@ class Perseguidor:
             for coluna in range(min(colunas, sheet_width // largura)):
                 x = coluna * largura
                 y = linha * altura
-
                 sprite = sheet.subsurface(pygame.Rect(x, y, largura, altura))
                 sprite = pygame.transform.scale(sprite, (96, 96))  # Redimensiona para o tamanho do sprite
                 sprites.append(sprite)
-               
         return sprites if sprites else [pygame.Surface((64, 64))]
 
     def resetar_tempo(self):

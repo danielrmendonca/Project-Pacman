@@ -28,20 +28,16 @@ tela = pygame.display.set_mode((LARGURA, ALTURA))
 pygame.display.set_caption("Pacman")
 
 # Carregar o fundo do menu com caminho relativo para 'imagens'
-
 FUNDO_MENU = pygame.image.load(os.path.join(os.path.dirname(__file__), "..", "..", "imagens", "fundo_menu.jpg"))
 FUNDO_MENU = pygame.transform.scale(FUNDO_MENU, (LARGURA, ALTURA))
 
 # Função para carregar a fonte personalizada
 def carregar_fonte(tamanho):
     fonte_path = os.path.join(os.path.dirname(__file__), "..", "..", "imagens", "PressStart2P-Regular.ttf")
-
     return pygame.font.Font(fonte_path, tamanho)
-   
 
-# Carregar o mapa
+# Instanciar o labirinto (sem carregar o mapa ainda)
 labirinto = Labirinto()
-labirinto.carregar_mapa()
 
 # Função para encontrar posição inicial
 def encontrar_posicao_inicial():
@@ -55,6 +51,14 @@ def desenhar_contador_moedas(tela, pontuacao):
 
 # Loop principal do jogo
 def jogo_principal():
+    # Carregar o mapa aqui, dentro da função
+    try:
+        labirinto.carregar_mapa()
+    except Exception as e:
+        print(f"Erro ao carregar o mapa: {e}")
+        pygame.quit()
+        sys.exit()
+
     pos_x, pos_y = encontrar_posicao_inicial()
     jogador = Protagonista(pos_x, pos_y)
     vidas = 3

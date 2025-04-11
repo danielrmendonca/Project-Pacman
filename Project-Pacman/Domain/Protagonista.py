@@ -22,10 +22,14 @@ class Protagonista:
         self.esta_movendo = False  # Novo atributo para rastrear movimento
 
         # Carregar spritesheet
-        sprite_path = r"C:\Users\Gabriel Sousa\OneDrive - UFPE\Área de Trabalho\Project-Pacman-2\sprites\protagonista.png"
+        sprite_path = os.path.join(os.path.dirname(__file__), "..", "..", "sprites", "protagonista.png")
+        try:
+            self.spritesheet = pygame.image.load(sprite_path).convert_alpha()
+            print(f"Spritesheet carregado: {self.spritesheet.get_size()}")
+        except FileNotFoundError as e:
+            print(f"Erro: Não foi possível encontrar 'protagonista.png' em {sprite_path}")
+            raise
 
-        self.spritesheet = pygame.image.load(sprite_path).convert_alpha()
-        print(f"Spritesheet carregado: {self.spritesheet.get_size()}")
         # Extrair sprites
         self.sprites = self.get_sprites(self.spritesheet, 54, 13, 64, 64)
         self.animations = {
@@ -62,6 +66,7 @@ class Protagonista:
             (int(self.x - self.sprite_size[0] // 2 + self.sprite_offset_x),
                 int(self.y - self.sprite_size[1] // 2 + self.sprite_offset_y))
         )
+
     def mover(self, teclas, paredes):
         dx = 0
         dy = 0
@@ -106,7 +111,7 @@ class Protagonista:
                 if dy > 0:
                     hitbox.bottom = parede.top
                 elif dy < 0:
-                    hitbox.top = parede.bottom
+                    hitbox.top = parede.bottom  # Correção aqui!
                 dy = 0
 
         # Atualiza a posição central do personagem
