@@ -21,7 +21,7 @@ PRETO = (0, 0, 0)
 BRANCO = (255, 255, 255)
 AZUL = (0, 0, 255)
 VERMELHO = (255, 0, 0)
-
+AMARELO = (255, 255, 0)
 # Inicialização do Pygame
 pygame.init()
 tela = pygame.display.set_mode((LARGURA, ALTURA))
@@ -63,9 +63,18 @@ def encontrar_posicao_inicial():
 
 def desenhar_contador_moedas(tela, pontuacao):
     fonte = carregar_fonte(24)  # Usa a fonte personalizada
-    texto = fonte.render(f"Moedas: {pontuacao}", True, BRANCO)
-    tela.blit(texto, (10, 10))
+    texto = fonte.render(f"Caneta: {pontuacao}", True, AMARELO)
+    tela.blit(texto, (35, 30))
 
+def desenhar_contador_monitores(tela, vida):
+    fonte = carregar_fonte(24)  # Usa a fonte personalizada
+    texto = fonte.render(f"Vida: {vida}", True, AMARELO)
+    tela.blit(texto, (35, 70))
+
+def desenhar_contador_livros(tela, pontuacao_livros):
+    fonte = carregar_fonte(24)  # Usa a fonte personalizada
+    texto = fonte.render(f"Livros: {pontuacao_livros}", True, AMARELO)
+    tela.blit(texto, (35, 120))
 # Loop principal do jogo
 
 
@@ -82,7 +91,7 @@ def jogo_principal():
 
     pos_x, pos_y = encontrar_posicao_inicial()
     jogador = Protagonista(pos_x, pos_y)
-    vidas = 3
+    vida = 3
     spawner = SpawnManager()
     matriz = maze
     moedas = Coletaveis.criar_moedas_na_matriz(matriz, TAMANHO_CELULA, spawner)
@@ -106,7 +115,8 @@ def jogo_principal():
                                 TAMANHO_CELULA
                             ))
     print(f"Total de paredes carregadas: {len(paredes)}")
-
+    pontuacao_monitores = 0
+    pontuacao_livros = 0
     pontuacao = 0
     relogio = pygame.time.Clock()
 
@@ -125,8 +135,8 @@ def jogo_principal():
             continue
 
         if inimigo.verificar_colisao(jogador):
-            vidas -= 1
-            if vidas <= 0:
+            vida -= 1
+            if vida <= 0:
                 rodando = False
                 tela_resultado(vitoria)
             else:
@@ -156,18 +166,21 @@ def jogo_principal():
         for item in itens_especiais[:]:
             if item.verificar_colisao(jogador):
                 itens_especiais.remove(item)
+                pontuacao_livros +=1
 
         for monitor in monitores[:]:  # Copia da lista para remover enquanto itera
             if abs(jogador.x - monitor.x) < 32 and abs(jogador.y - monitor.y) < 32:
-                vidas += 1  # Aumenta uma vida
+                vida += 1  # Aumenta uma vida
                 monitores.remove(monitor)
+                pontuacao_monitores += 1
 
         if not powerup_ativo and len(powerups)==0:
             buff_spawnado = spawner.tentar_spawn_buff(
                     moedas, monitores, powerups, powerup_ativo, buff_aplicado=Buff_velocidade)
-            
+
         if buff_spawnado:
             powerup_ativo = True
+
 
         # Desenho na tela
         tela.fill(PRETO)  # Limpa a tela primeiro
@@ -187,7 +200,7 @@ def jogo_principal():
                 tempo_powerup = pygame.time.get_ticks()
                 jogador.velocidade *= 2  # Dobra a velocidade
                 velocidade_buff_ativa = True  # Novo flag
-                
+                pontuacao_livros += 1
          # Verifica se o powerup expirou (5 segundos)
         if powerup_ativo and (pygame.time.get_ticks() - tempo_powerup > 5000):
             powerup_ativo = False
@@ -200,6 +213,8 @@ def jogo_principal():
 
         # Desenha o contador por último para garantir visibilidade
         desenhar_contador_moedas(tela, pontuacao)
+        desenhar_contador_monitores(tela, vida)
+        desenhar_contador_livros(tela, pontuacao_livros)
         pygame.display.flip()
         relogio.tick(60)
 

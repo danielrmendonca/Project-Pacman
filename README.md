@@ -41,7 +41,7 @@ Coletável básico, o principal para a condição de vitória.
 Colétavel de velocidade.
 
 #### 📗 Livro de matemática discreta
-Coletável de intangibilidade.
+Coletável de vida.
 
 ### 👾 Perseguidor
 Professor que patrulha o mapa com o objetivo de capturar o jogador. O contato com ele resulta em perder uma vida. Seu comportamento é parcialmente aleatório, com padrões de perseguição baseados na posição do jogador.
