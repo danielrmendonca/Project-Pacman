@@ -1,24 +1,67 @@
 import pygame
 import math
+import os
 from collections import deque
 import heapq
 
 class Perseguidor:
     def __init__(self, x, y):
-        self.x = x
-        self.y = y
+        self.x = x  # Centro horizontal do personagem
+        self.y = y  # Centro vertical do personagem
         self.velocidade = 0.5
-        self.raio = 9  
-        self.cor = (255, 0, 0)
+        self.raio = 9  # Hitbox circular (mesmo tamanho do protagonista)
+        self.cor = (255, 0, 0)  # Vermelho para o perseguidor
         self.direcao = [0, 0]
         self.caminho = []
-        self.grid_size = 24  # Alinhado com TAMANHO_TILE
+        self.grid_size = 24
         self.ultima_atualizacao_caminho = 0
         self.intervalo_atualizacao_caminho = 500
-        self.resetar_tempo()
         self.velocidade_atual = self.velocidade
         self.fator_velocidade = 0.08
         self.velocidade_max = 3
+        self.resetar_tempo()
+
+        # Configurações do sprite (mesmo tamanho do protagonista)
+        self.sprite_size = (160, 150)
+        self.sprite_offset_x = 0
+        self.sprite_offset_y = 0
+
+        # Configurações de animação
+        self.anim_frame = 0
+        self.anim_speed = 100
+        self.last_anim_update = pygame.time.get_ticks()
+        self.direction = "baixo"
+
+        # Carregar spritesheet
+        sprite_path = r"C:\Users\Gabriel Sousa\OneDrive - UFPE\Área de Trabalho\Project-Pacman-2\sprites\perseguidor.png"
+
+        self.spritesheet = pygame.image.load(sprite_path).convert_alpha()
+        print(f"Perseguidor spritesheet carregado: {self.spritesheet.get_size()}")
+        
+        # Extrair sprites
+        self.sprites = self.get_sprites(self.spritesheet, 54, 13, 64, 64)
+        
+        # Definir animações com verificação de segurança
+        self.animations = {
+            "baixo": self.sprites[130:139] if len(self.sprites) >= 139 else [self.spritesheet],
+            "esquerda": self.sprites[117:126] if len(self.sprites) >= 126 else [self.spritesheet],
+            "direita": self.sprites[143:152] if len(self.sprites) >= 152 else [self.spritesheet],
+            "cima": self.sprites[104:113] if len(self.sprites) >= 113 else [self.spritesheet]
+        }
+
+    def get_sprites(self, sheet, linhas, colunas, largura, altura):
+        sprites = []
+        sheet_width, sheet_height = sheet.get_size()
+        for linha in range(min(linhas, sheet_height // altura)):
+            for coluna in range(min(colunas, sheet_width // largura)):
+                x = coluna * largura
+                y = linha * altura
+
+                sprite = sheet.subsurface(pygame.Rect(x, y, largura, altura))
+                sprite = pygame.transform.scale(sprite, (96, 96))  # Redimensiona para o tamanho do sprite
+                sprites.append(sprite)
+               
+        return sprites if sprites else [pygame.Surface((64, 64))]
 
     def resetar_tempo(self):
         self.tempo_inicial = pygame.time.get_ticks()
@@ -30,9 +73,36 @@ class Perseguidor:
         tempo_decorrido = self.get_tempo_decorrido()
         velocidade_acumulada = self.velocidade_atual + (self.fator_velocidade * tempo_decorrido)
         return min(velocidade_acumulada, self.velocidade_max)
-        
+
     def desenhar(self, tela):
-        pygame.draw.circle(tela, self.cor, (int(self.x), int(self.y)), self.raio)
+        now = pygame.time.get_ticks()
+        if now - self.last_anim_update > self.anim_speed:
+            self.anim_frame = (self.anim_frame + 1) % len(self.animations[self.direction])
+            self.last_anim_update = now
+
+        try:
+            sprite = self.animations[self.direction][self.anim_frame]
+            # Desenha o sprite centralizado (mesmo sistema do protagonista)
+            tela.blit(
+                sprite,
+                (int(self.x - self.sprite_size[0] // 2 + self.sprite_offset_x),
+                 int(self.y - self.sprite_size[1] // 2 + self.sprite_offset_y))
+            )
+            # Removido o desenho da hitbox para torná-la invisível
+            # hitbox = self.get_hitbox()
+            # pygame.draw.rect(tela, (0, 255, 0), hitbox, 2)
+        except IndexError:
+            print(f"Erro: Animação inválida ({self.direction}, frame {self.anim_frame})")
+            pygame.draw.circle(tela, self.cor, (int(self.x), int(self.y)), self.raio)
+
+    def get_hitbox(self):
+        """Retorna a hitbox circular como um retângulo (para colisão)"""
+        return pygame.Rect(
+            self.x - self.raio,
+            self.y - self.raio,
+            self.raio * 2,
+            self.raio * 2
+        )
 
     def posicao_no_grid(self, x, y):
         return (int(x // self.grid_size), int(y // self.grid_size))
@@ -47,7 +117,6 @@ class Perseguidor:
             y_start = int(parede.y // self.grid_size)
             x_end = int((parede.x + parede.width) // self.grid_size)
             y_end = int((parede.y + parede.height) // self.grid_size)
-            
             for y in range(y_start, y_end):
                 for x in range(x_start, x_end):
                     if 0 <= y < rows and 0 <= x < cols:
@@ -119,6 +188,7 @@ class Perseguidor:
             self.caminho.pop(0)
             return self.seguir_caminho()
         if distancia > 0:
+            self.direction = "direita" if dx > abs(dy) else "esquerda" if dx < -abs(dy) else "baixo" if dy > 0 else "cima"
             return [dx/distancia, dy/distancia]
         return [0, 0]
     
@@ -127,42 +197,38 @@ class Perseguidor:
         self.direcao = self.seguir_caminho()
         self.velocidade_atual = self.get_velocidade_atual()
 
-        # Calcula o deslocamento com base na direção e velocidade
         dx = self.direcao[0] * self.velocidade_atual
         dy = self.direcao[1] * self.velocidade_atual
 
-        # Cria a hitbox atual do perseguidor
-        hitbox = pygame.Rect(
-            self.x - self.raio,
-            self.y - self.raio,
-            self.raio * 2,
-            self.raio * 2
-        )
-
-        # Testa movimento horizontal
+        # Usa o mesmo sistema de hitbox do protagonista
+        hitbox = self.get_hitbox()
+        
         hitbox.x += dx
         for parede in paredes:
             if hitbox.colliderect(parede):
-                if dx > 0:  # Movendo para a direita
+                if dx > 0:
                     hitbox.right = parede.left
-                elif dx < 0:  # Movendo para a esquerda
+                elif dx < 0:
                     hitbox.left = parede.right
-                dx = 0  # Bloqueia o movimento no eixo X
-
-        # Testa movimento vertical
+                dx = 0
+        
         hitbox.y += dy
         for parede in paredes:
             if hitbox.colliderect(parede):
-                if dy > 0:  # Movendo para baixo
+                if dy > 0:
                     hitbox.bottom = parede.top
-                elif dy < 0:  # Movendo para cima
+                elif dy < 0:
                     hitbox.top = parede.bottom
-                dy = 0  # Bloqueia o movimento no eixo Y
-
-        # Atualiza a posição do perseguidor para o centro da hitbox
+                dy = 0
+        
         self.x = hitbox.centerx
         self.y = hitbox.centery
     
     def verificar_colisao(self, player):
         distancia = math.sqrt((self.x - player.x)**2 + (self.y - player.y)**2)
         return distancia < (self.raio + player.raio)
+
+    def limitar_bordas(self, largura_tela, altura_tela):
+        """Mantém o perseguidor dentro dos limites da tela"""
+        self.x = max(self.raio, min(largura_tela - self.raio, self.x))
+        self.y = max(self.raio, min(altura_tela - self.raio, self.y))

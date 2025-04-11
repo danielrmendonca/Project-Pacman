@@ -1,63 +1,76 @@
 import pygame
+import pytmx
 import sys
 import random
-import pytmx
 import os
-from Protagonista import Protagonista 
-from Coletaveis import *
+from Protagonista import Protagonista
 from Perseguidor import Perseguidor
-from Labirinto import Labirinto
-from Spawn import SpawnManager
 from Botao import Botao
-from Monitor import Monitor
+from Coletaveis import Coletaveis
 from Buff_velocidade import Buff_velocidade
+from Monitor import Monitor
+from Spawn import SpawnManager
 from Matriz import maze
+from Labirinto import Labirinto
 
-pygame.init()
-
-labirinto = Labirinto()
-TAMANHO_CELULA = labirinto.TAMANHO_TILE
-LARGURA = labirinto.LARGURA_TELA
-ALTURA = labirinto.ALTURA_TELA
-tela = pygame.display.set_mode((LARGURA, ALTURA))
-pygame.display.set_caption("Pac-Man")
-labirinto.carregar_mapa()
-
+# Constantes
+LARGURA = 1296
+ALTURA = 720
+TAMANHO_CELULA = 24
 PRETO = (0, 0, 0)
-AZUL = (0, 0, 255)
 BRANCO = (255, 255, 255)
+AZUL = (0, 0, 255)
 VERMELHO = (255, 0, 0)
 
-images_path = os.path.join(os.path.dirname(__file__), "..", "..", "imagens")
-FUNDO_MENU = pygame.image.load(os.path.join(images_path, "fundo_menu.jpg"))
+# Inicialização do Pygame
+pygame.init()
+tela = pygame.display.set_mode((LARGURA, ALTURA))
+pygame.display.set_caption("Pacman")
+
+# Carregar o fundo do menu com caminho relativo para 'imagens'
+
+FUNDO_MENU = pygame.image.load(os.path.join(os.path.dirname(__file__), "..", "..", "imagens", "fundo_menu.jpg"))
 FUNDO_MENU = pygame.transform.scale(FUNDO_MENU, (LARGURA, ALTURA))
 
+# Função para carregar a fonte personalizada
 def carregar_fonte(tamanho):
-    return pygame.font.Font(os.path.join(images_path, "PressStart2P-Regular.ttf"), tamanho)
+    fonte_path = os.path.join(os.path.dirname(__file__), "..", "..", "imagens", "PressStart2P-Regular.ttf")
 
+    return pygame.font.Font(fonte_path, tamanho)
+   
+
+# Carregar o mapa
+labirinto = Labirinto()
+labirinto.carregar_mapa()
+
+# Função para encontrar posição inicial
 def encontrar_posicao_inicial():
-    """Retorna a posição central do mapa"""
-    return (LARGURA // 2, ALTURA // 2)  # Centro do mapa: (648, 360)
+    return LARGURA // 2, ALTURA // 2  # (648, 360)
 
-def desenhar_contador_moedas(tela, quantidade):
-    fonte = carregar_fonte(20)
-    texto = fonte.render(f"Moedas: {quantidade}", True, BRANCO)
-    tela.blit(texto, (LARGURA - texto.get_width() - 20, ALTURA - texto.get_height() - 20))
+# Função para desenhar contador de moedas
+def desenhar_contador_moedas(tela, pontuacao):
+    fonte = carregar_fonte(24)  # Usa a fonte personalizada
+    texto = fonte.render(f"Moedas: {pontuacao}", True, BRANCO)
+    tela.blit(texto, (10, 10))
 
+# Loop principal do jogo
 def jogo_principal():
     pos_x, pos_y = encontrar_posicao_inicial()
     jogador = Protagonista(pos_x, pos_y)
     vidas = 3
-    total_moedas = 190
+
+    matriz = maze
+    moedas = Coletaveis.criar_moedas_na_matriz(matriz, TAMANHO_CELULA)
+    monitores = Monitor.criar_monitores_na_matriz(matriz, TAMANHO_CELULA)
+    total_moedas = len(moedas)
 
     inimigo = Perseguidor(170, 200)
 
+    # Construção das paredes
     paredes = []
     for camada in labirinto.dados_tmx.layers:
         if isinstance(camada, pytmx.TiledTileLayer):
-            print(f"Camada encontrada: {camada.name}")
             if "colisão" in camada.name.lower():
-                print(f"Camada de colisão encontrada: {camada.name}, tiles: {sum(sum(row) for row in camada.data)}")
                 for y in range(camada.height):
                     for x in range(camada.width):
                         if camada.data[y][x] != 0:
@@ -67,34 +80,35 @@ def jogo_principal():
                                 TAMANHO_CELULA,
                                 TAMANHO_CELULA
                             ))
-    print(f"Total de paredes: {len(paredes)}")
+    print(f"Total de paredes carregadas: {len(paredes)}")
 
-    matriz = maze
-
-    moedas = []
-    monitores = []
-    itens_especiais = []
-    spawner = SpawnManager()
-    powerups = []
-    powerup_ativo = False
-    moedas = Coletaveis.criar_moedas_na_matriz(matriz, TAMANHO_CELULA)
-    monitores = Monitor.criar_monitores_na_matriz(matriz, TAMANHO_CELULA)
     pontuacao = 0
     relogio = pygame.time.Clock()
+
+    itens_especiais = []
+    powerups = []
+    powerup_ativo = False
+    spawner = SpawnManager()
 
     rodando = True
     while rodando:
         if pontuacao >= total_moedas:
             rodando = False
+            print("Você coletou todas as moedas!")
             continue
 
         if inimigo.verificar_colisao(jogador):
             vidas -= 1
             if vidas <= 0:
                 rodando = False
+                print("Game Over!")
             else:
                 jogador.x, jogador.y = encontrar_posicao_inicial()
+                jogador.anim_frame = 0
+                jogador.direction = "baixo"
                 inimigo.x, inimigo.y = 170, 200
+                inimigo.anim_frame = 0
+                inimigo.direction = "baixo"
 
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
@@ -121,20 +135,17 @@ def jogo_principal():
                 monitores.remove(monitor)
 
         if random.random() < 0.3 and not powerup_ativo:
-            spawner.tentar_spawn_buff(moedas, itens_especiais, powerups, powerup_ativo, buff_aplicado= Buff_velocidade)
+            spawner.tentar_spawn_buff(moedas, itens_especiais, powerups, powerup_ativo, buff_aplicado=Buff_velocidade)
 
-        tela.fill(PRETO)
+        # Desenho na tela
+        tela.fill(PRETO)  # Limpa a tela primeiro
         labirinto.desenhar(tela)
 
-        # Removido o desenho das colisões
-        # for parede in paredes:
-        #     pygame.draw.rect(tela, VERMELHO, parede, 1)
-
-        for moeda in moedas[:]:
+        for moeda in moedas:
             moeda.desenhar(tela)
         for item in itens_especiais:
             item.desenhar(tela)
-        for monitor in monitores[:]:
+        for monitor in monitores:
             monitor.desenhar(tela)
         for powerup in powerups[:]:
             powerup.desenhar(tela)
@@ -144,38 +155,45 @@ def jogo_principal():
 
         jogador.modelo_personagem(tela)
         inimigo.desenhar(tela)
-        desenhar_contador_moedas(tela, pontuacao)
 
+        # Desenha o contador por último para garantir visibilidade
+        desenhar_contador_moedas(tela, pontuacao)
         pygame.display.flip()
         relogio.tick(60)
 
+# Menu principal
 def menu_principal():
     ativo = True
     while ativo:
         tela.blit(FUNDO_MENU, (0, 0))
         pos_mouse = pygame.mouse.get_pos()
 
-        titulo = carregar_fonte(70).render("MAT-MAN", True, (182, 143, 64))
-        subtitulo = carregar_fonte(24).render("O Labirinto Misterioso", True, (182, 143, 64))
+        # Títulos do menu com fonte personalizada
+        fonte_titulo = carregar_fonte(50)
+        fonte_subtitulo = carregar_fonte(20)
+        fonte_botao = carregar_fonte(16)
+
+        titulo = fonte_titulo.render("Emanoel", True, (182, 143, 64))
+        subtitulo = fonte_subtitulo.render("E o Labirinto Misterioso", True, (182, 143, 64))
         
         botao_jogar = Botao(
-            pos=(LARGURA//2, 250),
+            pos=(LARGURA // 2, 250),
             text_input="JOGAR",
-            font=carregar_fonte(20),
+            font=fonte_botao,
             base_color=BRANCO,
             hovering_color=AZUL
         )
         
         botao_sair = Botao(
-            pos=(LARGURA//2, 325),
+            pos=(LARGURA // 2, 325),
             text_input="SAIR",
-            font=carregar_fonte(20),
+            font=fonte_botao,
             base_color=BRANCO,
             hovering_color=AZUL
         )
 
-        tela.blit(titulo, titulo.get_rect(center=(LARGURA//2 + 4, 110)))
-        tela.blit(subtitulo, subtitulo.get_rect(center=(LARGURA//2 + 4, 160)))
+        tela.blit(titulo, titulo.get_rect(center=(LARGURA // 2 + 4, 110)))
+        tela.blit(subtitulo, subtitulo.get_rect(center=(LARGURA // 2 + 4, 160)))
 
         for botao in [botao_jogar, botao_sair]:
             botao.mudar_cor(pos_mouse)
@@ -197,6 +215,7 @@ def menu_principal():
 
         pygame.display.update()
 
-menu_principal()
-pygame.quit()
-sys.exit()
+if __name__ == "__main__":
+    menu_principal()
+    pygame.quit()
+    sys.exit()
