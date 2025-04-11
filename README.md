@@ -80,6 +80,10 @@ Utilizada para gerar comportamentos aleatórios.
 Biblioteca padrão usada para interação com o sistema operacional, como manipulação de arquivos e diretórios.  
 > Não requer instalação.
 
+#### `mixer`
+Biblioteca para música.
+> Não requer instalação.
+
 ---
 
 ### 🛠️ Ferramentas
@@ -115,10 +119,3 @@ Criar as artes dos personagens e coletáveis.
 - Implementação de lógica de jogo com `pygame`.
 - Aplicação prática de orientação a objetos no desenvolvimento de jogos.
 - Integração de assets visuais com o código (sprites, mapas, elementos visuais).
-
----
-
-## 📸 Capturas de Tela
-
-![Menu principal](imagens/menu_principal.png)
-![Gameplay](imagens/gameplay.png)
