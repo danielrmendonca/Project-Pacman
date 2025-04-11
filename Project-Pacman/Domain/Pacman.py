@@ -70,6 +70,7 @@ def desenhar_contador_moedas(tela, pontuacao):
 
 
 def jogo_principal():
+    vida = 3
     velocidade_buff_ativa = False
     # Carregar o mapa aqui, dentro da função
     try:
@@ -156,8 +157,9 @@ def jogo_principal():
             if item.verificar_colisao(jogador):
                 itens_especiais.remove(item)
 
-        for monitor in monitores[:]:
-            if monitor.verificar_colisao(jogador):
+        for monitor in monitores[:]:  # Copia da lista para remover enquanto itera
+            if abs(jogador.x - monitor.x) < 32 and abs(jogador.y - monitor.y) < 32:
+                vidas += 1  # Aumenta uma vida
                 monitores.remove(monitor)
 
         if not powerup_ativo and len(powerups)==0:
