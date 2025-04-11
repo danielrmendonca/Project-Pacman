@@ -99,7 +99,7 @@ Plataforma onde o repositório do projeto foi hospedado. Facilitou a colaboraç�
 #### Tiled
 Criador de mapas.
 
-### Pixel Art
+#### Pixel Art
 Criar as artes dos personagens e coletáveis.
 
 ---
