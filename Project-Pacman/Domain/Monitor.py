@@ -3,6 +3,7 @@ import random
 import os
 from Coletaveis import Coletaveis
 from Spawn import SpawnManager
+
 class Monitor(Coletaveis):
     def __init__(self, x, y):
         super().__init__(x, y)
@@ -16,7 +17,9 @@ class Monitor(Coletaveis):
     def carregar_sprite_aleatorio(self):
         # Lista de possíveis arquivos de sprite
         sprite_files = ["monitor1.png", "monitor2.png", "monitor3.png"]
-        sprite_dir = r"C:\Users\Gabriel Sousa\OneDrive - UFPE\Área de Trabalho\Project-Pacman-2\sprites"
+        
+        # Define o caminho relativo para a pasta sprites
+        sprite_dir = os.path.join(os.path.dirname(__file__), "..", "..", "sprites")
         
         # Escolhe um arquivo aleatório
         sprite_file = random.choice(sprite_files)
@@ -25,8 +28,8 @@ class Monitor(Coletaveis):
         try:
             sprite = pygame.image.load(sprite_path).convert_alpha()
             return pygame.transform.scale(sprite, self.sprite_size)
-        except:
-            print(f"Erro ao carregar sprite: {sprite_path}")
+        except Exception as e:
+            print(f"Erro ao carregar sprite: {sprite_path} - {e}")
             return None
     
     def desenhar(self, tela):
