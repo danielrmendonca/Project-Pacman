@@ -31,6 +31,13 @@ pygame.display.set_caption("Pacman")
 FUNDO_MENU = pygame.image.load(os.path.join(os.path.dirname(__file__), "..", "..", "imagens", "fundo_menu.jpg"))
 FUNDO_MENU = pygame.transform.scale(FUNDO_MENU, (LARGURA, ALTURA))
 
+FUNDO_VITORIA = pygame.image.load(os.path.join(os.path.dirname(__file__), "..", "..", "imagens", "fundo_vitoria.png"))
+FUNDO_VITORIA = pygame.transform.scale(FUNDO_VITORIA, (LARGURA, ALTURA))
+
+FUNDO_DERROTA = pygame.image.load(os.path.join(os.path.dirname(__file__), "..", "..", "imagens", "fundo_derrota.png"))
+FUNDO_DERROTA = pygame.transform.scale(FUNDO_DERROTA, (LARGURA, ALTURA))
+
+
 # Função para carregar a fonte personalizada
 def carregar_fonte(tamanho):
     fonte_path = os.path.join(os.path.dirname(__file__), "..", "..", "imagens", "PressStart2P-Regular.ttf")
@@ -95,17 +102,19 @@ def jogo_principal():
     spawner = SpawnManager()
 
     rodando = True
+    vitoria = False
     while rodando:
         if pontuacao >= total_moedas:
             rodando = False
-            print("Você coletou todas as moedas!")
+            vitoria = True
+            tela_resultado(vitoria)
             continue
 
         if inimigo.verificar_colisao(jogador):
             vidas -= 1
             if vidas <= 0:
                 rodando = False
-                print("Game Over!")
+                tela_resultado(vitoria)
             else:
                 jogador.x, jogador.y = encontrar_posicao_inicial()
                 jogador.anim_frame = 0
@@ -218,6 +227,92 @@ def menu_principal():
                     sys.exit()
 
         pygame.display.update()
+
+def tela_resultado(vitoria):
+    ativo = True
+    while ativo:
+
+        if vitoria:
+            tela.blit(FUNDO_VITORIA, (0, 0))
+            pos_mouse = pygame.mouse.get_pos()
+
+            fonte_titulo = carregar_fonte(50)
+            fonte_subtitulo = carregar_fonte(20)
+            fonte_botao = carregar_fonte(16)
+
+            titulo = fonte_titulo.render("VOCÊ CONSEGUIU!", True, (182, 143, 64))
+            subtitulo = fonte_subtitulo.render("De primeira! Agora é estudar para cálculo.", True, (182, 143, 64))
+            
+            botao_jogar = Botao(
+                pos=(LARGURA // 2 -10, 200),
+                text_input="JOGAR NOVAMENTE",
+                font=fonte_botao,
+                base_color=BRANCO,
+                hovering_color=AZUL
+            )
+            
+            botao_sair = Botao(
+                pos=(LARGURA // 2 -10, 250),
+                text_input="APROVEITAR AS FÉRIAS",
+                font=fonte_botao,
+                base_color=BRANCO,
+                hovering_color=AZUL
+            )
+
+            tela.blit(titulo, titulo.get_rect(center=(LARGURA // 2 + 4, 100)))
+            tela.blit(subtitulo, subtitulo.get_rect(center=(LARGURA // 2 + 4, 150)))
+
+        else:
+            tela.blit(FUNDO_DERROTA, (0, 0))
+            pos_mouse = pygame.mouse.get_pos()
+
+            # Títulos do menu com fonte personalizada
+            fonte_titulo = carregar_fonte(35)
+            fonte_subtitulo = carregar_fonte(15)
+            fonte_botao = carregar_fonte(15)
+
+            titulo = fonte_titulo.render("VOCÊ FOI PEGO!", True, (182, 143, 64))
+            subtitulo = fonte_subtitulo.render("Devia ter estudado mais.", True, (182, 143, 64))
+            
+            botao_jogar = Botao(
+                pos=(LARGURA // 2, 150),
+                text_input="TENTAR NOVAMENTE",
+                font=fonte_botao,
+                base_color=BRANCO,
+                hovering_color=AZUL
+            )
+            
+            botao_sair = Botao(
+                pos=(LARGURA // 2, 200),
+                text_input="SAIR",
+                font=fonte_botao,
+                base_color=BRANCO,
+                hovering_color=AZUL
+            )
+
+            tela.blit(titulo, titulo.get_rect(center=(LARGURA // 2 + 4, 85)))
+            tela.blit(subtitulo, subtitulo.get_rect(center=(LARGURA // 2 + 4, 115)))
+
+        for botao in [botao_jogar, botao_sair]:
+            botao.mudar_cor(pos_mouse)
+            botao.update_tela(tela)
+
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                ativo = False
+                pygame.quit()
+                sys.exit()
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                if botao_jogar.checar_clique(pos_mouse):
+                    ativo = False
+                    jogo_principal()
+                elif botao_sair.checar_clique(pos_mouse):
+                    ativo = False
+                    pygame.quit()
+                    sys.exit()
+
+        pygame.display.update()
+
 
 if __name__ == "__main__":
     menu_principal()
