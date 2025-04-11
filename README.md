@@ -96,6 +96,12 @@ Sistema de controle de versão utilizado para gerenciar alterações no código,
 #### GitHub
 Plataforma onde o repositório do projeto foi hospedado. Facilitou a colaboração, controle de versões, issues e visualização do progresso, com o github desktop, foi possível aproveitar muito bem a integração com git.
 
+#### Tiled
+Criador de mapas.
+
+### Pixel Art
+Criar as artes dos personagens e coletáveis.
+
 ---
 
 ## 🧠 Conceitos
